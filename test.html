@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>K&K Clothing - Elevate Your Style</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    /* Reset and base styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Montserrat', sans-serif;
+      color: #fff;
+      background-color: #000;
+      line-height: 1.6;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    /* Container utility */
+    .container {
+      width: 90%;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    /* Header styles */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 30px 20px;
+      background-color: #000;
+      box-shadow: 0 2px 15px rgba(0,0,0,0.2);
+      position: sticky;
+      top: 0;
+      z-index: 999;
+    }
+
+    .logo {
+      font-size: 2em;
+      font-weight: 700;
+      letter-spacing: 2px;
+      color: #DC143C; /* Crimson */
+    }
+
+    /* Navigation styles */
+    nav {
+      display: flex;
+      align-items: center;
+    }
+
+    nav ul {
+      display: flex;
+      list-style: none;
+    }
+
+    nav li {
+      margin-left: 25px;
+    }
+
+    nav a {
+      font-weight: 600;
+      font-size: 1em;
+      transition: color 0.3s;
+      color: #fff;
+    }
+
+    nav a:hover {
+      color: #DC143C;
+    }
+
+    /* Cart & profile actions in nav */
+    .nav-actions { display:flex; align-items:center; gap:10px; margin-left:20px }
+    .nav-actions a { display:inline-flex; align-items:center; justify-content:center; padding:8px; border-radius:8px; color:#fff; font-weight:700 }
+    .nav-actions a:hover { background: rgba(255,255,255,0.03); color:#fff }
+
+    /* Search styles */
+    .nav-actions { display:flex; align-items:center; gap:10px }
+
+    .search-container {
+      display: flex;
+      align-items: center;
+      margin-left: 20px;
+    }
+
+    .search-input {
+      padding: 8px 12px;
+      border: 1px solid #555;
+      border-radius: 20px;
+      outline: none;
+      font-size: 0.9em;
+      width: 0;
+      transition: width 0.3s ease, padding 0.3s ease;
+      background-color: transparent;
+      color: #fff;
+    }
+
+    .search-input.active {
+      width: 200px;
+      padding: 8px 12px;
+    }
+
+    .search-icon {
+      cursor: pointer;
+      margin-left: 10px;
+      font-size: 1.2em;
+      color: #555;
+      transition: color 0.3s;
+    }
+
+    .search-icon:hover {
+      color: #fff;
+    }
+
+    /* Hero */
+    .hero {
+      position: relative;
+      height: 100vh;
+      background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)),
+        url('https://image-cdn.hypb.st/https%3A%2F%2Fhypebeast.com%2Fimage%2F2023%2F10%2Fmaison-margiela-spring-summer-2024-paris-fashion-week-womenswear-runway-17.png?q=75&w=800&cbr=1&format=png&fit=max') no-repeat center/cover;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .hero-content {
+      max-width: 800px;
+      color: #fff;
+    }
+
+    .hero h1 {
+      font-size: 3.5em;
+      margin-bottom: 20px;
+      line-height: 1.2;
+    }
+
+    .hero p {
+      font-size: 1.2em;
+      margin-bottom: 30px;
+    }
+
+    .btn-cta {
+      padding: 15px 30px;
+      background-color: #222;
+      color: #fff;
+      border: none;
+      border-radius: 25px;
+      font-size: 1em;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .btn-cta:hover {
+      background-color: #555;
+    }
+
+    /* About */
+    .about {
+      padding: 80px 20px;
+      background-color: #000;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .about-text {
+      flex: 1;
+      min-width: 300px;
+      padding: 20px;
+    }
+
+    .about-text h2 {
+      font-size: 2.2em;
+      margin-bottom: 20px;
+      color: #DC143C;
+    }
+
+    .about-text p {
+      font-size: 1.1em;
+      color: #DC143C;
+      line-height: 1.6;
+    }
+
+    .about-image {
+      flex: 1;
+      min-width: 300px;
+      padding: 20px;
+    }
+
+    .about-image img {
+      width: 100%;
+      border-radius: 10px;
+      object-fit: cover;
+    }
+
+    /* Collections */
+    .collections {
+      padding: 80px 20px;
+      background-color: #0a0a0a;
+    }
+
+    .collections h2 {
+      text-align: center;
+      font-size: 2.2em;
+      margin-bottom: 40px;
+      color: #DC143C;
+    }
+
+    .collection-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 30px;
+    }
+
+    .collection-card {
+      background: #fff;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .collection-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 12px 24px rgba(0,0,0,0.2);
+    }
+
+    .collection-image {
+      height: 200px;
+      background-size: cover;
+      background-position: center;
+    }
+
+    .collection-info {
+      padding: 20px;
+      text-align: center;
+    }
+
+    .collection-info h3 {
+      margin-bottom: 10px;
+      font-size: 1.5em;
+      color: #222;
+    }
+
+    .collection-info p {
+      font-size: 1em;
+      color: #555;
+    }
+
+    /* CTA Section */
+    .cta-section {
+      padding: 80px 20px;
+      background-color: #222;
+      color: #fff;
+      text-align: center;
+    }
+
+    .cta-section h2 {
+      font-size: 2.5em;
+      margin-bottom: 20px;
+    }
+
+    .cta-section p {
+      font-size: 1.2em;
+      margin-bottom: 30px;
+    }
+
+    .btn-secondary {
+      padding: 15px 30px;
+      background-color: transparent;
+      border: 2px solid #fff;
+      border-radius: 25px;
+      font-size: 1em;
+      cursor: pointer;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    .btn-secondary:hover {
+      background-color: #fff;
+      color: #222;
+    }
+
+    /* Footer */
+    footer {
+      background-color: #222;
+      color: #fff;
+      padding: 50px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    footer p {
+      margin-bottom: 15px;
+    }
+
+    .social-icons {
+      display: flex;
+      gap: 20px;
+    }
+
+    .social-icons a {
+      color: #fff;
+      font-size: 1.8em;
+      transition: color 0.3s;
+    }
+
+    .social-icons a:hover {
+      color: #ff6347;
+    }
+
+    /* Responsive */
+    @media(max-width: 768px) {
+      header {
+        flex-direction: column;
+        align-items: center;
+        padding: 20px 0;
+      }
+      nav {
+        flex-direction: column;
+        align-items: center;
+      }
+      nav ul {
+        flex-direction: column;
+        align-items: center;
+      }
+      nav li {
+        margin: 10px 0;
+      }
+      .search-input {
+        width: 0;
+        padding: 8px 12px;
+      }
+      body {
+        font-size: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+<!-- Header -->
+<header>
+  <div class="logo">K&K</div>
+  <nav>
+    <ul>
+      <li><a href="#">Начало</a></li>
+      <li><a href="#about">Дрехи</a></li>
+      <li><a href="#collections">Контакт</a></li>
+      <li><a href="#contact">За нас</a></li>
+    </ul>
+    <div class="nav-actions" aria-hidden="false">
+      <a href="cart.html" class="icon-link" title="Кошница" aria-label="Кошница">🛒</a>
+      <a href="profile.html" class="icon-link" title="Профил" aria-label="Профил">👤</a>
+    </div>
+
+    <div class="search-container">
+      <input type="text" class="search-input" placeholder="Search..." />
+      <div class="search-icon" id="searchToggle" title="Search">🔍</div>
+    </div>
+  </nav>
+</header>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-content">
+    <h1>Купи сега или съжалявай после</h1>
+    <p>Нови артикули и лимитирани артикули</p>
+    <button class="btn-cta">Разгледай тук</button>
+  </div>
+</section>
+
+<!-- About -->
+<section id="about" class="about container">
+  <div class="about-text">
+    <h2>За K&K</h2>
+    <p>
+      K&K е съвременна марка за дрехи, посветена на предоставянето на стилна, висококачествена облекло, която вдъхновява хората. Мисията ни е да съчетаем модерна естетика с вечна елегантност, създавайки универсални колекции за всеки повод.
+    </p>
+  </div>
+  <div class="about-image">
+    <img src="https://images.unsplash.com/photo-1549924231-f129b911e442?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" alt="K&K Fashion" />
+  </div>
+</section>
+
+<!-- Collections -->
+<section id="collections" class="collections">
+  <div class="container">
+    <h2>Нашите колекции</h2>
+    <div class="collection-grid">
+      <div class="collection-card">
+        <div class="collection-image" style="background-image: url('https://images.unsplash.com/photo-1621389172320-cc9d0d7746d2?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80');"></div>
+        <div class="collection-info">
+          <h3>Градски уличен стил</h3>
+          <p>Ярки, смели стилове за градски живот и свободно време.</p>
+        </div>
+      </div>
+      <div class="collection-card">
+        <div class="collection-image" style="background-image: url('https://images.unsplash.com/photo-1612831495450-9e8b3f4dc4e0?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80');"></div>
+        <div class="collection-info">
+          <h3>Елегантна класика</h3>
+          <p>Изискани модели за вечна елегантност.</p>
+        </div>
+      </div>
+      <div class="collection-card">
+        <div class="collection-image" style="background-image: url('https://images.unsplash.com/photo-1549924231-f129b911e442?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80');"></div>
+        <div class="collection-info">
+          <h3>Удобство и релакс</h3>
+          <p>Релаксиращи модели за ежедневието.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <h2>Присъедини се към K&K</h2>
+  <p>Бъди в крак с нашите нови колекции, ексклузивни оферти и модни съвети. Абонирай се за нашия бюлетин.</p>
+  <button class="btn-secondary">Абонирай се</button>
+</section>
+
+<!-- Footer -->
+<footer id="contact">
+  <div class="container">
+    <p>&copy; 2024 K&K Clothing. Всички права запазени.</p>
+    <div class="social-icons">
+      <a href="#" aria-label="Instagram" title="Instagram">
+        <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M12 2.163c3.204 0 3.584.012 4.85.07 1.17.055 1.958.24 2.413.404a4.92 4.92 0 011.76 1.012 4.92 4.92 0 011.012 1.76c.164.455.35 1.243.404 2.413.058 1.266.07 1.646.07 4.85s-.012 3.584-.07 4.85c-.055 1.17-.24 1.958-.404 2.413a4.92 4.92 0 01-1.012 1.76 4.92 4.92 0 01-1.76 1.012c-.455.164-1.243.35-2.413.404-1.266.058-1.646.07-4.85.07s-3.584-.012-4.85-.07c-1.17-.055-1.958-.24-2.413-.404a4.92 4.92 0 01-1.76-1.012 4.92 4.92 0 01-1.012-1.76c-.164-.455-.35-1.243-.404-2.413C2.175 15.747 2.163 15.367 2.163 12s.012-3.584.07-4.85c.055-1.17.24-1.958.404-2.413a4.92 4.92 0 011.012-1.76 4.92 4.92 0 011.76-1.012c.455-.164 1.243-.35 2.413-.404C8.416 2.175 8.796 2.163 12 2.163zm0-2.163C8.736 0 8.332.012 7.052.07 5.772.127 4.86.33 4.108.678a6.922 6.922 0 00-2.5 1.63A6.922 6.922 0 00.678 4.108c-.348.752-.55 1.664-.607 2.944C0 8.332 0 8.736 0 12s.012 3.668.07 4.948c.057 1.28.259 2.192.607 2.944a6.922 6.922 0 001.63 2.5 6.922 6.922 0 002.5 1.63c.752.348 1.664.55 2.944.607 1.28.058 1.684.07 4.948.07s3.668-.012 4.948-.07c1.28-.057 2.192-.259 2.944-.607a6.922 6.922 0 002.5-1.63 6.922 6.922 0 001.63-2.5c.348-.752.55-1.664.607-2.944.058-1.28.07-1.684.07-4.948s-.012-3.668-.07-4.948c-.057-1.28-.259-2.192-.607-2.944a6.922 6.922 0 00-1.63-2.5 6.922 6.922 0 00-2.5-1.63c-.752-.348-1.664-.55-2.944-.607C15.668.012 15.264 0 12 0z"/>
+          <path d="M12 5.838A6.162 6.162 0 005.838 12 6.162 6.162 0 0012 18.162 6.162 6.162 0 0018.162 12 6.162 6.162 0 0012 5.838zm0 10.162A4 4 0 118 12a4 4 0 014 4zm4.406-10.845a1.44 1.44 0 11-2.88 0 1.44 1.44 0 012.88 0z"/>
+        </svg>
+      </a>
+      <a href="#" aria-label="Facebook" title="Facebook">
+        <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M22.675 0H1.324C.593 0 0 .593 0 1.324v21.352C0 23.407.593 24 1.324 24h11.495v-9.294H9.691V11.41h3.128V8.413c0-3.1 1.893-4.788 4.66-4.788 1.325 0 2.464.098 2.796.142v3.24l-1.918.001c-1.504 0-1.794.716-1.794 1.763v2.31h3.588l-.467 3.297h-3.121V24h6.116C23.407 24 24 23.407 24 22.675V1.324C24 .593 23.407 0 22.675 0z"/>
+        </svg>
+      </a>
+    </div>
+  </div>
+</footer>
+
+<!-- Search script -->
+<script>
+  const searchToggle = document.getElementById('searchToggle');
+  const searchInput = document.querySelector('.search-input');
+
+  searchToggle.addEventListener('click', () => {
+    searchInput.classList.toggle('active');
+    if (searchInput.classList.contains('active')) {
+      searchInput.focus();
+    } else {
+      searchInput.value = '';
+    }
+  });
+</script>
+</body>
+</html>

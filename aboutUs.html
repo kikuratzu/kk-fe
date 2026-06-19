@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>За нас — K&K Clothing</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    /* Base reset & container */
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Montserrat',sans-serif;background:#000;color:#fff;line-height:1.6}
+    a{text-decoration:none;color:inherit}
+    .container{width:90%;max-width:1200px;margin:0 auto}
+
+    /* Header */
+    header{display:flex;justify-content:space-between;align-items:center;padding:22px;background:linear-gradient(180deg,rgba(0,0,0,0.6),rgba(0,0,0,0.35));border-bottom:1px solid rgba(255,255,255,0.03);position:sticky;top:0;z-index:99}
+    .logo{font-weight:800;color:#DC143C;font-size:1.8em;letter-spacing:2px}
+    nav{display:flex;align-items:center;gap:16px}
+    nav ul{display:flex;list-style:none;gap:14px;align-items:center}
+    nav a,.dropdown-toggle{padding:6px 8px;border-radius:8px;font-weight:600;color:rgba(255,255,255,0.92)}
+    nav a:hover,.dropdown-toggle:hover{background:rgba(255,255,255,0.02);color:#fff}
+
+    /* Cart & profile actions in nav */
+    .nav-actions{display:flex;align-items:center;gap:10px;margin-left:6px}
+    .nav-actions a{display:inline-flex;align-items:center;justify-content:center;padding:8px;border-radius:8px;color:rgba(255,255,255,0.92);font-weight:700}
+    .nav-actions a:hover{background:rgba(255,255,255,0.02);color:#fff}
+
+    /* Dropdown */
+    .dropdown{position:relative}
+    .dropdown-toggle{background:transparent;border:none;cursor:pointer}
+    .dropdown-toggle:after{content:'▾';margin-left:6px;font-size:.72em}
+    .dropdown-menu{position:absolute;top:calc(100% + 8px);left:0;min-width:160px;background:#0b0b0b;border:1px solid rgba(255,255,255,0.04);border-radius:10px;display:none;flex-direction:column;padding:6px 0;box-shadow:0 12px 40px rgba(0,0,0,0.6);z-index:1000}
+    .dropdown.open .dropdown-menu{display:flex}
+    .dropdown-menu a{padding:10px 14px;color:#e6e6e6;font-weight:600}
+    .dropdown-menu a:hover{background:rgba(255,255,255,0.02);color:#fff}
+
+    .search-container{display:flex;align-items:center;background:rgba(255,255,255,0.02);padding:6px 8px;border-radius:999px}
+    .search-input{width:0;padding:8px 12px;border:none;border-radius:999px;background:transparent;color:#fff;outline:none;transition:width .28s}
+    .search-input.active{width:210px}
+    .search-icon{cursor:pointer;margin-left:8px}
+
+    /* Hero */
+    .hero{min-height:36vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:56px 20px;background:linear-gradient(180deg,rgba(0,0,0,0.6),rgba(0,0,0,0.6));}
+    .hero h1{font-size:2.4rem;margin-bottom:8px}
+    .hero p{color:#cfcfcf}
+
+    /* About content */
+    .about-section{padding:64px 20px;background:linear-gradient(180deg,#050505,#0b0b0b)}
+    .lead{max-width:880px;margin:0 auto 28px;text-align:center}
+    .lead h2{font-size:1.9em;margin-bottom:12px;color:#fff}
+    .lead p{color:#d0d0d0}
+
+    .grid {display:grid;grid-template-columns:1fr 1fr;gap:28px;max-width:1200px;margin:18px auto}
+    .card{background:linear-gradient(180deg,#0f0f0f,#0b0b0b);border:1px solid rgba(255,255,255,0.03);padding:20px;border-radius:12px;box-shadow:0 12px 40px rgba(0,0,0,0.6)}
+
+    .values{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+    .value{padding:16px;border-radius:10px;background:rgba(255,255,255,0.02);text-align:center}
+    .value h3{margin-bottom:8px;color:#fff}
+    .value p{color:#d0d0d0;font-size:0.95em}
+
+    .team-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+    .member{display:flex;flex-direction:column;gap:12px;align-items:center;text-align:center}
+    .avatar{width:120px;height:120px;border-radius:12px;background:#222;overflow:hidden}
+    .avatar img{width:100%;height:100%;object-fit:cover}
+    .member h4{color:#fff}
+    .member p{color:#cfcfcf;font-size:0.95em}
+
+    .timeline{display:flex;flex-direction:column;gap:12px}
+    .timeline-item{padding:12px;border-left:3px solid rgba(220,20,60,0.9);background:rgba(255,255,255,0.02);border-radius:8px}
+    .timeline-item h4{color:#fff;margin-bottom:6px}
+    .timeline-item p{color:#d0d0d0;font-size:0.95em}
+
+    /* CTA */
+    .cta{padding:48px 20px;display:flex;justify-content:center}
+    .cta .card{display:flex;gap:16px;align-items:center;max-width:900px}
+    .cta input{flex:1;padding:12px;border-radius:999px;border:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.02);color:#fff}
+    .cta button{padding:12px 18px;border-radius:999px;border:none;background:linear-gradient(90deg,#ff7b86,#DC143C);color:#fff;font-weight:700;cursor:pointer}
+
+    /* Footer compact */
+    footer{padding:40px 20px;background:linear-gradient(180deg,#070707,#0b0b0b);color:#cfcfcf}
+    footer .footer-top{display:flex;justify-content:space-between;align-items:center;gap:20px;max-width:1200px;margin:0 auto 16px}
+    footer .logo{color:#DC143C}
+    footer .footer-bottom{text-align:center;color:#9e9e9e;font-size:0.9em}
+
+    /* Responsive adjustments */
+    @media(max-width:980px){.grid{grid-template-columns:1fr}.values{grid-template-columns:repeat(2,1fr)}.team-grid{grid-template-columns:repeat(2,1fr)} }
+    @media(max-width:640px){.values{grid-template-columns:1fr}.team-grid{grid-template-columns:1fr}.dropdown-menu{position:static}}
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header>
+    <div class="logo">K&K</div>
+    <nav>
+      <ul>
+        <li><a href="startingPage.html">Начало</a></li>
+        <li class="dropdown">
+          <button class="dropdown-toggle" id="clothesToggle" aria-expanded="false" aria-controls="clothesMenu">Дрехи</button>
+          <div class="dropdown-menu" id="clothesMenu" role="menu" aria-labelledby="clothesToggle">
+            <a href="startingPage.html#men" role="menuitem">Мъже</a>
+            <a href="startingPage.html#women" role="menuitem">Жени</a>
+            <a href="startingPage.html#kids" role="menuitem">Деца</a>
+          </div>
+        </li>
+        <li><a href="contact.html">Контакт</a></li>
+        <li><a href="aboutUs.html">За нас</a></li>
+      </ul>
+
+      <div class="nav-actions" aria-hidden="false">
+        <a href="cart.html" class="icon-link" title="Кошница" aria-label="Кошница">🛒</a>
+        <a href="profile.html" class="icon-link" title="Профил" aria-label="Профил">👤</a>
+      </div>
+
+      <div class="search-container">
+        <input class="search-input" placeholder="Търси...">
+        <div class="search-icon" id="searchToggle" title="Търси">🔍</div>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="container">
+      <h1>Историята и ценностите на K&K</h1>
+      <p>Създаваме внимателно подбрани колекции, които комбинират съвременна естетика и дълготрайно качество.</p>
+    </div>
+  </section>
+
+  <!-- About details -->
+  <section class="about-section">
+    <div class="lead container">
+      <h2>Нашата мисия</h2>
+      <p>Мисията на K&K е да предложи облекло, което вдъхновява увереност и комфорт. Залагаме на устойчиви материали, етично производство и внимание към детайла във всеки шев.</p>
+    </div>
+
+    <div class="grid container">
+      <div class="card">
+        <h3>Нашите ценности</h3>
+        <div class="values" style="margin-top:12px">
+          <div class="value">
+            <h3>Качество</h3>
+            <p>Подбираме материали, които издържат на времето и ежедневната употреба.</p>
+          </div>
+          <div class="value">
+            <h3>Устойчивост</h3>
+            <p>Работим с доставчици, които спазват екологични стандарти и редуцират отпадъците.</p>
+          </div>
+          <div class="value">
+            <h3>Достъпност</h3>
+            <p>Стремим се да предложим стил, който е достъпен, без да правим компромис с етиката или качеството.</p>
+          </div>
+        </div>
+
+        <div style="margin-top:18px">
+          <h3>История</h3>
+          <p style="color:#d0d0d0;margin-top:8px">K&K започна като малко семейно начинание и бързо се превърна в общност от хора, които оценяват добрия стил и устойчивите практики. От локални пазари до дигитален магазин — нашият фокус е непроменен.</p>
+        </div>
+      </div>
+
+      <div>
+        <div class="card">
+          <h3>Екип</h3>
+          <div class="team-grid" style="margin-top:14px">
+            <div class="member">
+              <div class="avatar"><img src="" alt="Founder"></div>
+              <h4>Мария Иванова</h4>
+              <p>Съосновател & креативен директор</p>
+            </div>
+            <div class="member">
+              <div class="avatar"><img src="" alt="Head of Design"></div>
+              <h4>Петър Георгиев</h4>
+              <p>Главен дизайнер</p>
+            </div>
+            <div class="member">
+              <div class="avatar"><img src="" alt="Operations"></div>
+              <h4>Анна Димитрова</h4>
+              <p>Операции & поддръжка</p>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top:18px" class="card">
+          <h3>Пътешествие</h3>
+          <div class="timeline" style="margin-top:12px">
+            <div class="timeline-item">
+              <h4>2018 — Създаване</h4>
+              <p>Първите ни колекции бяха създадени от ръка и представени на локални места.</p>
+            </div>
+            <div class="timeline-item">
+              <h4>2020 — Развитие</h4>
+              <p>Разширихме гамата и оптимизирахме веригата на доставки с внимание към устойчивостта.</p>
+            </div>
+            <div class="timeline-item">
+              <h4>2023 — Линия за всеки ден</h4>
+              <p>Пуснахме най-популярната ни колекция — удобни ежедневни модели, достъпни за всички.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cta container" style="margin-top:26px">
+      <div class="card">
+        <div style="flex:1">
+          <h3>Бюлетин</h3>
+          <p style="color:#d0d0d0;margin-top:8px">Абонирайте се, за да получавате първи нови колекции и специални предложения.</p>
+        </div>
+        <form onsubmit="event.preventDefault(); alert('Благодарим за абонамента!');" style="display:flex;gap:12px;align-items:center">
+          <input type="email" placeholder="Вашият имейл" required>
+          <button type="submit">Абонирай се</button>
+        </form>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-top container">
+      <div>
+        <div class="logo">K&K</div>
+        <p style="color:#cfcfcf">Съвременна марка за дрехи с фокус върху качество, детайл и автентичен стил.</p>
+      </div>
+      <div>
+        <h4 style="margin-bottom:8px;color:#fff">Бързи връзки</h4>
+        <ul style="list-style:none;color:#d9d9d9;padding-left:0;line-height:1.8">
+          <li><a href="startingPage.html">Начало</a></li>
+          <li><a href="contact.html">Контакт</a></li>
+          <li><a href="startingPage.html#collections">Колекции</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom container">
+      <div>&copy; 2024 K&K Clothing. Всички права запазени.</div>
+    </div>
+  </footer>
+
+  <script>
+    // search toggle
+    const searchToggle = document.getElementById('searchToggle');
+    const searchInput = document.querySelector('.search-input');
+    if (searchToggle) {
+      searchToggle.addEventListener('click', () => {
+        searchInput.classList.toggle('active');
+        if (searchInput.classList.contains('active')) searchInput.focus(); else searchInput.value = '';
+      });
+    }
+
+    // dropdown toggle
+    const clothesToggle = document.getElementById('clothesToggle');
+    const clothesMenu = document.getElementById('clothesMenu');
+    if (clothesToggle) {
+      clothesToggle.addEventListener('click', () => {
+        const parent = clothesToggle.parentElement;
+        const isOpen = parent.classList.toggle('open');
+        clothesToggle.setAttribute('aria-expanded', isOpen);
+      });
+
+      document.addEventListener('click', (e) => {
+        const dropdown = document.querySelector('.dropdown');
+        if (!dropdown) return;
+        if (!dropdown.contains(e.target)) {
+          dropdown.classList.remove('open');
+          clothesToggle.setAttribute('aria-expanded', 'false');
+        }
+      });
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          const dropdown = document.querySelector('.dropdown');
+          if (dropdown) { dropdown.classList.remove('open'); clothesToggle.setAttribute('aria-expanded','false'); clothesToggle.focus(); }
+        }
+      });
+    }
+  </script>
+</body>
+</html>

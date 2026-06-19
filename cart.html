@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Кошница — K&K Clothing</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Montserrat',sans-serif;background:#000;color:#fff;line-height:1.6}
+    a{text-decoration:none;color:inherit}
+    .container{width:90%;max-width:1200px;margin:0 auto}
+
+    header{display:flex;justify-content:space-between;align-items:center;padding:22px;background:linear-gradient(180deg,rgba(0,0,0,0.6),rgba(0,0,0,0.35));border-bottom:1px solid rgba(255,255,255,0.03);position:sticky;top:0;z-index:99}
+    .logo{font-weight:800;color:#DC143C;font-size:1.8em;letter-spacing:2px}
+    nav{display:flex;align-items:center;gap:16px}
+    nav ul{display:flex;list-style:none;gap:14px;align-items:center}
+    nav a,.dropdown-toggle{padding:6px 8px;border-radius:8px;font-weight:600;color:rgba(255,255,255,0.92)}
+    nav a:hover,.dropdown-toggle:hover{background:rgba(255,255,255,0.02);color:#fff}
+
+    /* Cart & profile actions in nav */
+    .nav-actions{display:flex;align-items:center;gap:10px;margin-left:6px}
+    .nav-actions a{display:inline-flex;align-items:center;justify-content:center;padding:8px;border-radius:8px;color:rgba(255,255,255,0.92);font-weight:700}
+    .nav-actions a:hover{background:rgba(255,255,255,0.02);color:#fff}
+
+    .dropdown{position:relative}
+    .dropdown-toggle{background:transparent;border:none;cursor:pointer}
+    .dropdown-toggle:after{content:'▾';margin-left:6px;font-size:.72em}
+    .dropdown-menu{position:absolute;top:calc(100% + 8px);left:0;min-width:160px;background:#0b0b0b;border:1px solid rgba(255,255,255,0.04);border-radius:10px;display:none;flex-direction:column;padding:6px 0;box-shadow:0 12px 40px rgba(0,0,0,0.6);z-index:1000}
+    .dropdown.open .dropdown-menu{display:flex}
+    .dropdown-menu a{padding:10px 14px;color:#e6e6e6;font-weight:600}
+    .dropdown-menu a:hover{background:rgba(255,255,255,0.02);color:#fff}
+
+    .search-container{display:flex;align-items:center;background:rgba(255,255,255,0.02);padding:6px 8px;border-radius:999px}
+    .search-input{width:0;padding:8px 12px;border:none;border-radius:999px;background:transparent;color:#fff;outline:none;transition:width .28s}
+    .search-input.active{width:210px}
+    .search-icon{cursor:pointer;margin-left:8px}
+
+    /* Hero section */
+    .hero{min-height:24vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:40px 20px;background:linear-gradient(180deg,rgba(0,0,0,0.6),rgba(0,0,0,0.6));}
+    .hero h1{font-size:2.4rem;margin-bottom:6px}
+    .hero p{color:#cfcfcf;font-size:1.05em}
+
+    /* Cart section */
+    .cart-section{padding:48px 20px;background:linear-gradient(180deg,#080808,#0b0b0b);min-height:calc(100vh - 200px)}
+    .cart-container{display:grid;grid-template-columns:1fr 350px;gap:32px;max-width:1200px;margin:0 auto}
+
+    .cart-items{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.04);border-radius:12px;padding:24px}
+    .cart-item{display:grid;grid-template-columns:120px 1fr 100px;gap:20px;padding:16px;border-bottom:1px solid rgba(255,255,255,0.04);align-items:start}
+    .cart-item:last-child{border-bottom:none}
+
+    .item-image{width:120px;height:120px;background:linear-gradient(135deg,#1a1a1a,#2a2a2a);border-radius:8px;object-fit:cover}
+
+    .item-details h4{font-size:1.05em;margin-bottom:6px;color:#fff}
+    .item-details p{color:#999;font-size:0.9em;margin-bottom:4px}
+    .item-price{color:#DC143C;font-weight:700;margin:8px 0}
+
+    .quantity-control{display:flex;align-items:center;gap:8px;margin-top:10px}
+    .quantity-control button{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:#fff;width:28px;height:28px;border-radius:4px;cursor:pointer;font-weight:700;transition:all .2s}
+    .quantity-control button:hover{background:rgba(255,255,255,0.12);border-color:rgba(255,255,255,0.2)}
+    .quantity-control input{width:40px;padding:4px 8px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);color:#fff;text-align:center;border-radius:4px;outline:none}
+
+    .item-total{text-align:right;font-weight:700;color:#DC143C;font-size:1.1em}
+    .item-actions{text-align:right}
+    .remove-btn{padding:6px 12px;background:rgba(220,20,60,0.15);border:1px solid rgba(220,20,60,0.3);color:#DC143C;border-radius:6px;cursor:pointer;font-weight:600;font-size:0.85em;transition:all .2s}
+    .remove-btn:hover{background:rgba(220,20,60,0.3);border-color:rgba(220,20,60,0.6)}
+
+    /* Empty cart state */
+    .empty-cart{text-align:center;padding:60px 20px;color:#999}
+    .empty-cart h3{font-size:1.4em;margin-bottom:12px;color:#cfcfcf}
+    .empty-cart p{margin-bottom:24px}
+    .empty-cart .btn-primary{padding:12px 28px}
+
+    /* Cart summary */
+    .cart-summary{background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.04);border-radius:12px;padding:24px;height:fit-content;position:sticky;top:100px}
+    .summary-title{font-size:1.2em;margin-bottom:18px;color:#fff}
+    .summary-row{display:flex;justify-content:space-between;margin-bottom:12px;color:#cfcfcf;font-size:0.95em}
+    .summary-row.total{border-top:1px solid rgba(255,255,255,0.1);padding-top:12px;margin-top:12px;font-size:1.15em;color:#fff;font-weight:700}
+    .summary-row.total .price{color:#DC143C}
+
+    .btn-primary{display:block;width:100%;padding:14px;background:linear-gradient(90deg,#ff7b86,#DC143C);color:#fff;border:none;border-radius:8px;font-weight:700;font-size:1em;cursor:pointer;transition:all .25s;margin-top:18px}
+    .btn-primary:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(220,20,60,0.3)}
+
+    .btn-secondary{display:block;width:100%;padding:12px;background:transparent;border:1px solid rgba(255,255,255,0.2);color:#fff;border-radius:8px;font-weight:600;font-size:0.95em;cursor:pointer;transition:all .25s;margin-top:10px}
+    .btn-secondary:hover{background:rgba(255,255,255,0.06);border-color:rgba(255,255,255,0.4)}
+
+    /* Promo section */
+    .promo-section{margin-top:20px;padding:16px;background:rgba(220,20,60,0.05);border:1px solid rgba(220,20,60,0.15);border-radius:8px}
+    .promo-label{font-size:0.85em;color:#999;margin-bottom:8px}
+    .promo-input{width:100%;padding:10px 12px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);color:#fff;border-radius:6px;outline:none;margin-bottom:8px}
+    .promo-input::placeholder{color:#666}
+    .promo-apply{width:100%;padding:8px;background:rgba(220,20,60,0.2);border:1px solid rgba(220,20,60,0.3);color:#DC143C;border-radius:6px;cursor:pointer;font-weight:600;transition:all .2s}
+    .promo-apply:hover{background:rgba(220,20,60,0.3);border-color:rgba(220,20,60,0.6)}
+
+    footer{padding:40px 20px;background:linear-gradient(180deg,#070707,#0b0b0b);color:#cfcfcf}
+    footer .footer-top{display:flex;justify-content:space-between;align-items:center;gap:20px;max-width:1200px;margin:0 auto 16px}
+    footer .logo{color:#DC143C}
+    footer .footer-bottom{text-align:center;color:#9e9e9e;font-size:0.9em}
+
+    @media(max-width:768px){
+      .cart-container{grid-template-columns:1fr}
+      .cart-summary{position:static}
+      .cart-item{grid-template-columns:1fr}
+      .item-image{width:100%;height:200px}
+      .item-total{text-align:left;margin-top:10px}
+    }
+
+    @media(max-width:640px){
+      .hero{padding:30px 16px}
+      .cart-section{padding:32px 16px}
+      .cart-items{padding:16px}
+      .cart-item{grid-template-columns:1fr;gap:12px}
+      .item-image{width:100%;height:160px}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">K&K</div>
+    <nav>
+      <ul>
+        <li><a href="startingPage.html">Начало</a></li>
+        <li class="dropdown">
+          <button class="dropdown-toggle" id="clothesToggle" aria-expanded="false" aria-controls="clothesMenu">Дрехи</button>
+          <div class="dropdown-menu" id="clothesMenu" role="menu" aria-labelledby="clothesToggle">
+            <a href="menClothing.html" role="menuitem">Мъже</a>
+            <a href="womenClothing.html" role="menuitem">Жени</a>
+            <a href="kidsClothing.html" role="menuitem">Деца</a>
+          </div>
+        </li>
+        <li><a href="contact.html">Контакт</a></li>
+        <li><a href="aboutUs.html">За нас</a></li>
+      </ul>
+
+      <div class="nav-actions" aria-hidden="false">
+        <a href="cart.html" class="icon-link" title="Кошница" aria-label="Кошница">🛒</a>
+        <a href="profile.html" class="icon-link" title="Профил" aria-label="Профил">👤</a>
+      </div>
+
+      <div class="search-container">
+        <input class="search-input" placeholder="Търси...">
+        <div class="search-icon" id="searchToggle" title="Търси">🔍</div>
+      </div>
+    </nav>
+  </header>
+
+  <section class="hero">
+    <div class="container">
+      <h1>Вашата кошница</h1>
+      <p>Преглед и управление на вашите избрани артикули</p>
+    </div>
+  </section>
+
+  <section class="cart-section">
+    <div class="cart-container">
+      <!-- Cart Items -->
+      <div class="cart-items" id="cartItems">
+        <!-- items will be rendered here by JavaScript -->
+      </div>
+
+      <!-- Cart Summary Sidebar -->
+      <div class="cart-summary">
+        <h3 class="summary-title">Резюме на поръчка</h3>
+        
+        <div class="summary-row">
+          <span>Подтотал:</span>
+          <span>269.96 лв.</span>
+        </div>
+        
+        <div class="summary-row">
+          <span>Доставка:</span>
+          <span>6.99 лв.</span>
+        </div>
+        
+        <div class="summary-row">
+          <span>Данък:</span>
+          <span>55.40 лв.</span>
+        </div>
+
+        <div class="summary-row total">
+          <span>Общо:</span>
+          <span class="price">332.35 лв.</span>
+        </div>
+
+        <button class="btn-primary">Преди към плащане</button>
+        <button class="btn-secondary" onclick="window.location.href='startingPage.html'">Продължи пазаруването</button>
+
+        <div class="promo-section">
+          <div class="promo-label">Промоционален код</div>
+          <input type="text" class="promo-input" placeholder="Въведи код..." maxlength="20">
+          <button class="promo-apply">Приложи</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-top">
+      <div class="logo">K&K</div>
+      <div style="color:#9e9e9e">
+        <p style="margin-bottom:4px">📍 София, България</p>
+        <p style="margin-bottom:4px">📧 info@kandkclothing.com</p>
+        <p>📞 +359 (0)2 123 4567</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 K&K Clothing. Всички права запазени.</p>
+    </div>
+  </footer>
+
+  <script src="cartApi.js?v=20260610"></script>
+  <script>
+    const clothesToggle = document.getElementById('clothesToggle');
+    const clothesMenu = document.getElementById('clothesMenu');
+    if (clothesToggle) {
+      clothesToggle.addEventListener('click', (e) => {
+        e.currentTarget.parentElement.classList.toggle('open');
+        clothesToggle.setAttribute('aria-expanded', clothesToggle.getAttribute('aria-expanded') === 'false' ? 'true' : 'false');
+      });
+    }
+
+    const searchToggle = document.getElementById('searchToggle');
+    const searchInput = document.querySelector('.search-input');
+    if (searchToggle && searchInput) {
+      searchToggle.addEventListener('click', () => {
+        searchInput.classList.toggle('active');
+        searchInput.focus();
+      });
+    }
+
+    function updateSummary(items) {
+      const rows = document.querySelectorAll('.summary-row');
+      const subtotal = items.reduce((sum, item) => sum + (Number(item.price || 0) * Number(item.quantity || 1)), 0);
+      const delivery = subtotal > 0 ? 6.99 : 0;
+      const tax = subtotal * 0.2;
+      const total = subtotal + delivery + tax;
+
+      if (rows[0]) rows[0].querySelector('span:last-child').textContent = `${subtotal.toFixed(2)} лв.`;
+      if (rows[1]) rows[1].querySelector('span:last-child').textContent = `${delivery.toFixed(2)} лв.`;
+      if (rows[2]) rows[2].querySelector('span:last-child').textContent = `${tax.toFixed(2)} лв.`;
+      if (rows[3]) rows[3].querySelector('.price').textContent = `${total.toFixed(2)} лв.`;
+    }
+
+    function attachQuantityListeners(container) {
+      container.querySelectorAll('.quantity-control button').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const input = btn.parentElement.querySelector('input');
+          const currentValue = Number(input.value || 1);
+          const itemEl = btn.closest('.cart-item');
+          const nextValue = btn.getAttribute('data-action') === 'increase'
+            ? Math.min(currentValue + 1, 10)
+            : Math.max(currentValue - 1, 1);
+
+          if (nextValue === currentValue) return;
+
+          const product = {
+            productId: itemEl.getAttribute('data-product-id'),
+            name: itemEl.getAttribute('data-name') || '',
+            price: Number(itemEl.getAttribute('data-price') || 0),
+            quantity: nextValue,
+            size: itemEl.getAttribute('data-size') || 'M'
+          };
+
+          window.KKCart.setCartItemQuantity(product, nextValue)
+            .then(() => {
+              input.value = nextValue;
+              itemEl.setAttribute('data-quantity', String(nextValue));
+              loadCart();
+            })
+            .catch((err) => {
+              console.error('Failed updating quantity', err);
+              alert('Неуспешна промяна на количеството.');
+            });
+        });
+      });
+    }
+
+    function attachRemoveListeners(container) {
+      container.querySelectorAll('.remove-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const itemEl = btn.closest('.cart-item');
+          const productId = itemEl.getAttribute('data-product-id');
+          window.KKCart.deleteCartItem(productId)
+            .then(() => {
+              itemEl.remove();
+              loadCart();
+            })
+            .catch((err) => {
+              console.error('Failed deleting item', err);
+              alert('Неуспешно премахване на артикула.');
+            });
+        });
+      });
+    }
+
+    function renderCart(items, errorMessage) {
+      const container = document.getElementById('cartItems');
+      container.innerHTML = '';
+      updateSummary(items || []);
+
+      if (errorMessage) {
+        container.innerHTML = `
+          <div class="empty-cart">
+            <h3>Неуспешно зареждане на кошницата</h3>
+            <p>${errorMessage}</p>
+            <a class="btn-primary" href="startingPage.html">Върни се към магазин</a>
+          </div>`;
+        return;
+      }
+
+      if (!items || items.length === 0) {
+        container.innerHTML = `
+          <div class="empty-cart">
+            <h3>Кошницата е празна</h3>
+            <p>Добавете артикули, за да продължите.</p>
+            <a class="btn-primary" href="startingPage.html">Върни се към магазин</a>
+          </div>`;
+        return;
+      }
+
+      items.forEach((p) => {
+        const itemEl = document.createElement('div');
+        itemEl.className = 'cart-item';
+        const prodId = p.id || p.productId || p.productID || p.uuid || '';
+        const price = Number(p.price || 0);
+        const quantity = Number(p.quantity || 1);
+
+        itemEl.setAttribute('data-product-id', prodId);
+        itemEl.setAttribute('data-name', p.name || '');
+        itemEl.setAttribute('data-price', String(price));
+        itemEl.setAttribute('data-size', p.size || 'M');
+        itemEl.setAttribute('data-quantity', String(quantity));
+
+        itemEl.innerHTML = `
+          <img src="${p.imageUrl || 'https://via.placeholder.com/120'}" alt="${p.name}" class="item-image">
+          <div class="item-details">
+            <h4>${p.name || 'Артикул'}</h4>
+            <p class="item-id" style="font-size:0.8em;color:#999;">ID: ${prodId || '—'}</p>
+            <p>Размер: ${p.size || '-'} | Цвят: ${p.color || '-'}</p>
+            <p style="color:#DC143C;font-size:0.85em;margin-top:6px">${p.available ? 'В наличност' : 'Изчерпано'}</p>
+            <div class="item-price">${price.toFixed(2)} лв.</div>
+            <div class="quantity-control">
+              <button data-action="decrease">−</button>
+              <input type="number" value="${quantity}" min="1" max="10">
+              <button data-action="increase">+</button>
+            </div>
+          </div>
+          <div class="item-actions">
+            <div class="item-total">${(price * quantity).toFixed(2)} лв.</div>
+            <button class="remove-btn">Премахни</button>
+          </div>`;
+        container.appendChild(itemEl);
+      });
+
+      attachQuantityListeners(container);
+      attachRemoveListeners(container);
+    }
+
+    function loadCart() {
+      window.KKCart.getCartItems()
+        .then((items) => renderCart(items))
+        .catch((err) => {
+          console.error('Cart load failed', err);
+          const message = err && err.message ? err.message : 'Провери дали API-то е стартирано и дали CORS е разрешен.';
+          renderCart([], message);
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', loadCart);
+  </script>
+</body>
+</html>

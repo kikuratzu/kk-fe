@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Контакт — K&K Clothing</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    /* Simple reset + shared look to match startingPage.html */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Montserrat', sans-serif; color: #fff; background: #000; line-height: 1.6; }
+    a { text-decoration: none; color: inherit; }
+    .container { width: 90%; max-width: 1200px; margin: 0 auto; }
+
+    header { display:flex; justify-content:space-between; align-items:center; padding:20px; background: linear-gradient(180deg, rgba(0,0,0,0.6), rgba(0,0,0,0.35)); border-bottom:1px solid rgba(255,255,255,0.03); position:sticky; top:0; z-index:99; }
+    .logo { font-size:1.8em; font-weight:800; color:#DC143C; letter-spacing:2px; }
+    nav { display:flex; align-items:center; gap:18px; }
+    nav ul { display:flex; list-style:none; gap:14px; align-items:center; }
+    nav a, .dropdown-toggle { color: rgba(255,255,255,0.92); padding:6px 8px; border-radius:8px; font-weight:600; }
+    nav a:hover, .dropdown-toggle:hover { background: rgba(255,255,255,0.02); color:#fff; }
+
+    /* Cart & profile actions in nav */
+    .nav-actions { display:flex; align-items:center; gap:10px; margin-left:6px }
+    .nav-actions a { display:inline-flex; align-items:center; justify-content:center; padding:8px; border-radius:8px; color:rgba(255,255,255,0.92); font-weight:700 }
+    .nav-actions a:hover { background: rgba(255,255,255,0.02); color:#fff }
+
+    /* Dropdown styles */
+    .dropdown { position:relative; }
+    .dropdown-toggle { background:transparent; border:none; cursor:pointer; }
+    .dropdown-toggle:after { content:'▾'; margin-left:6px; font-size:0.72em; }
+    .dropdown-menu { position:absolute; top:calc(100% + 8px); left:0; min-width:160px; background: #0b0b0b; border:1px solid rgba(255,255,255,0.04); border-radius:10px; display:none; flex-direction:column; padding:6px 0; box-shadow:0 12px 40px rgba(0,0,0,0.6); z-index:1000; }
+    .dropdown.open .dropdown-menu { display:flex; }
+    .dropdown-menu a { padding:10px 14px; color:#e6e6e6; font-weight:600; }
+    .dropdown-menu a:hover { background: rgba(255,255,255,0.02); color:#fff; }
+
+    .search-container { display:flex; align-items:center; background: rgba(255,255,255,0.02); padding:6px 8px; border-radius:999px; }
+    .search-input { width:0; padding:8px 12px; border:none; border-radius:999px; background:transparent; color:#fff; outline:none; transition:width .28s; }
+    .search-input.active { width:210px; }
+    .search-icon { cursor:pointer; margin-left:8px; }
+
+    /* Hero */
+    .hero { min-height:35vh; display:flex; align-items:center; justify-content:center; text-align:center; padding:60px 20px; background: linear-gradient(180deg, rgba(0,0,0,0.6), rgba(0,0,0,0.6)); }
+    .hero h1 { font-size:2.4rem; margin-bottom:6px; }
+    .hero p { color:#cfcfcf; margin-bottom:12px; }
+
+    /* Contact layout */
+    .contact-section { padding:60px 20px; background: linear-gradient(180deg,#080808,#0b0b0b); }
+    .contact-grid { display:grid; grid-template-columns: 1fr 420px; gap:32px; align-items:start; max-width:1200px; margin:0 auto; }
+
+    .card { background: linear-gradient(180deg,#0f0f0f,#0b0b0b); border:1px solid rgba(255,255,255,0.03); padding:22px; border-radius:12px; box-shadow:0 12px 40px rgba(0,0,0,0.6); }
+
+    .contact-info h3 { margin-bottom:10px; color:#fff; }
+    .contact-info p, .contact-info address { color:#d0d0d0; line-height:1.6; }
+    .contact-info a { color:#e6e6e6; font-weight:700; }
+
+    form.contact-form { display:flex; flex-direction:column; gap:12px; }
+    form .row { display:flex; gap:12px; }
+    form input[type="text"], form input[type="email"], form textarea { width:100%; padding:12px 14px; border-radius:10px; border:1px solid rgba(255,255,255,0.06); background: rgba(255,255,255,0.02); color:#fff; outline:none; }
+    form textarea { min-height:140px; resize:vertical; }
+    form button { padding:12px 18px; border-radius:999px; border:none; background: linear-gradient(90deg,#ff7b86,#DC143C); color:#fff; font-weight:700; cursor:pointer; }
+
+    .map { height:250px; border-radius:10px; overflow:hidden; border:1px solid rgba(255,255,255,0.03); }
+
+    /* Footer (compact) */
+    footer { padding:40px 20px; background: linear-gradient(180deg,#070707,#0b0b0b); color:#cfcfcf; }
+    footer .footer-top { display:grid; grid-template-columns:1fr 1fr; gap:20px; max-width:1200px; margin:0 auto 16px; }
+    footer .logo { color:#DC143C; font-weight:800; }
+    footer .social-icons { display:flex; gap:10px; }
+    footer .footer-bottom { text-align:center; color:#9e9e9e; font-size:0.9em; }
+
+    @media (max-width:900px) { .contact-grid { grid-template-columns: 1fr; } .dropdown-menu { position:static; } }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header>
+    <div class="logo">K&K</div>
+    <nav>
+      <ul>
+        <li><a href="startingPage.html">Начало</a></li>
+        <li class="dropdown">
+          <button class="dropdown-toggle" id="clothesToggle" aria-expanded="false" aria-controls="clothesMenu">Дрехи</button>
+          <div class="dropdown-menu" id="clothesMenu" role="menu" aria-labelledby="clothesToggle">
+            <a href="menClothing.html" role="menuitem">Мъже</a>
+            <a href="womenClothing.html" role="menuitem">Жени</a>
+            <a href="kidsClothing.html" role="menuitem">Деца</a>
+          </div>
+        </li>
+        <li><a href="contact.html">Контакт</a></li>
+        <li><a href="aboutUs.html">За нас</a></li>
+      </ul>
+
+      <div class="nav-actions" aria-hidden="false">
+        <a href="cart.html" class="icon-link" title="Кошница" aria-label="Кошница">🛒</a>
+        <a href="profile.html" class="icon-link" title="Профил" aria-label="Профил">👤</a>
+      </div>
+
+      <div class="search-container">
+        <input type="text" class="search-input" placeholder="Търси..." />
+        <div class="search-icon" id="searchToggle" title="Търси">🔍</div>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="container">
+      <h1>Свържете се с нас</h1>
+      <p>Имаме удоволствието да помогнем — пишете ни, обадете ни се или посетете нашия шоурум.</p>
+    </div>
+  </section>
+
+  <!-- Contact -->
+  <section class="contact-section">
+    <div class="contact-grid container">
+      <div class="card contact-info">
+        <h3>Контактна информация</h3>
+        <p>Ние от K&K сме на разположение за въпроси относно поръчки, доставки и сътрудничество.</p>
+        <address>
+          ул. Модна 12<br>
+          София, България
+        </address>
+        <p>Тел: <a href="tel:+359887001234">+359 88 700 1234</a></p>
+        <p>Имейл: <a href="mailto:info@kkclothing.bg">info@kkclothing.bg</a></p>
+
+        <div style="margin-top:14px">
+          <h4 style="margin-bottom:8px;color:#fff">Работно време</h4>
+          <p style="color:#d0d0d0;">Пон-Пет: 09:30 — 18:30<br>Съб: 10:00 — 14:00</p>
+        </div>
+
+        <div style="margin-top:18px">
+          <h4 style="margin-bottom:8px;color:#fff">Насреща сме в</h4>
+          <div class="social-icons">
+            <a href="#" aria-label="Instagram">IG</a>
+            <a href="#" aria-label="Facebook">FB</a>
+            <a href="#" aria-label="TikTok">TT</a>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="card">
+          <h3>Изпратете съобщение</h3>
+          <form class="contact-form" id="contactForm">
+            <div class="row">
+              <input type="text" id="name" placeholder="Вашето име" required />
+              <input type="email" id="email" placeholder="Имейл" required />
+            </div>
+            <input type="text" id="subject" placeholder="Относно" />
+            <textarea id="message" placeholder="Вашето съобщение" required></textarea>
+            <button type="submit">Изпрати съобщение</button>
+          </form>
+        </div>
+
+        <div style="margin-top:18px" class="card">
+          <h3>Намираме се тук</h3>
+          <div class="map">
+            <!-- Placeholder map: replace with your embed if needed -->
+            <iframe title="K&K Showroom" src="https://www.openstreetmap.org/export/embed.html?bbox=23.323%2C42.697%2C23.335%2C42.705&amp;layer=mapnik" style="border:0;width:100%;height:100%" loading="lazy"></iframe>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer (simplified copy from startingPage) -->
+  <footer>
+    <div class="footer-top container">
+      <div>
+        <div class="logo">K&K</div>
+        <p style="color:#cfcfcf">Съвременна марка за дрехи с фокус върху качество, детайл и автентичен стил.</p>
+      </div>
+      <div>
+        <h4 style="margin-bottom:8px;color:#fff">Бързи връзки</h4>
+        <ul style="list-style:none;color:#d9d9d9;padding-left:0;line-height:1.8">
+          <li><a href="startingPage.html">Начало</a></li>
+          <li><a href="contact.html">Контакт</a></li>
+          <li><a href="aboutUs.html">За нас</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom container">
+      <div>&copy; 2024 K&K Clothing. Всички права запазени.</div>
+    </div>
+  </footer>
+
+  <script>
+    // search toggle
+    const searchToggle = document.getElementById('searchToggle');
+    const searchInput = document.querySelector('.search-input');
+    if (searchToggle) {
+      searchToggle.addEventListener('click', () => {
+        searchInput.classList.toggle('active');
+        if (searchInput.classList.contains('active')) searchInput.focus(); else searchInput.value = '';
+      });
+    }
+
+    // Dropdown toggle
+    const clothesToggle = document.getElementById('clothesToggle');
+    const clothesMenu = document.getElementById('clothesMenu');
+    if (clothesToggle) {
+      clothesToggle.addEventListener('click', () => {
+        const parent = clothesToggle.parentElement;
+        const isOpen = parent.classList.toggle('open');
+        clothesToggle.setAttribute('aria-expanded', isOpen);
+      });
+
+      document.addEventListener('click', (e) => {
+        const dropdown = document.querySelector('.dropdown');
+        if (!dropdown) return;
+        if (!dropdown.contains(e.target)) {
+          dropdown.classList.remove('open');
+          clothesToggle.setAttribute('aria-expanded', 'false');
+        }
+      });
+      document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { const dropdown = document.querySelector('.dropdown'); if (dropdown) { dropdown.classList.remove('open'); clothesToggle.setAttribute('aria-expanded','false'); clothesToggle.focus(); } } });
+    }
+
+    // Contact form handler (demo)
+    const contactForm = document.getElementById('contactForm');
+    if (contactForm) {
+      contactForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const name = document.getElementById('name').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const message = document.getElementById('message').value.trim();
+        if (!name || !email || !message) { alert('Моля попълнете задължителните полета.'); return; }
+        alert('Съобщението е изпратено. Ще се свържем с вас скоро.');
+        contactForm.reset();
+      });
+    }
+  </script>
+</body>
+</html>
