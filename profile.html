@@ -48,10 +48,10 @@
     .profile-section{margin-bottom:28px}
     .section-title{font-size:1.1em;font-weight:800;color:#fff;margin-bottom:14px;border-bottom:2px solid rgba(220,20,60,0.3);padding-bottom:8px}
 
-    .profile-field{display:flex;justify-content:space-between;align-items:center;padding:14px;background:rgba(255,255,255,0.01);border:1px solid rgba(255,255,255,0.05);border-radius:10px;margin-bottom:10px}
-    .field-info{flex:1}
+    .profile-field{display:flex;justify-content:space-between;align-items:center;padding:14px;background:rgba(255,255,255,0.01);border:1px solid rgba(255,255,255,0.05);border-radius:10px;margin-bottom:10px;gap:12px}
+    .field-info{flex:1;min-width:0}
     .field-label{color:#cfcfcf;font-weight:600;font-size:0.9em;text-transform:uppercase;letter-spacing:0.5px}
-    .field-value{color:#fff;font-weight:700;margin-top:4px;word-break:break-all;font-family:'Courier New',monospace}
+    .field-value{color:#fff;font-weight:700;margin-top:4px;word-break:break-all;font-family:inherit}
 
     .field-actions{display:flex;gap:8px;margin-left:12px}
     .btn-edit{padding:8px 16px;border-radius:8px;border:1px solid rgba(220,20,60,0.4);background:transparent;color:#ff7b86;font-weight:700;cursor:pointer;font-size:0.9em;transition:all .12s ease}
@@ -140,6 +140,16 @@
           </div>
         </div>
 
+        <div class="profile-field">
+          <div class="field-info">
+            <div class="field-label">Имейл адрес</div>
+            <div class="field-value" id="displayEmail">Зареждане...</div>
+          </div>
+          <div class="field-actions">
+            <button class="btn-edit" id="editEmailBtn" title="Променете имейл адреса">Редактирай</button>
+          </div>
+        </div>
+
         <div class="username-change-panel" id="usernameChangePanel">
           <form class="username-change-form" id="usernameChangeForm">
             <label for="changeUsernamePassword">Парола</label>
@@ -185,16 +195,6 @@
             </div>
             <div class="form-message" id="passwordMessage"></div>
           </form>
-        </div>
-
-        <div class="profile-field">
-          <div class="field-info">
-            <div class="field-label">Имейл адрес</div>
-            <div class="field-value" id="displayEmail">Зареждане...</div>
-          </div>
-          <div class="field-actions">
-            <button class="btn-edit" id="editEmailBtn" title="Променете имейл адреса">Редактирай</button>
-          </div>
         </div>
 
         <div class="profile-field">
@@ -321,6 +321,87 @@
       const API_BASE = 'http://localhost:8080';
 
       let currentUsername = getStoredValue('loggedUsername') || (decoded && (decoded.username || decoded.sub || decoded.name || decoded.preferred_username)) || 'Потребител';
+      let currentEmail = getStoredValue('loggedEmail') || getStoredValue('email') || getStoredValue('userEmail') || '';
+      if (!currentEmail && decoded) {
+        currentEmail = decoded.email || decoded.mail || decoded.userEmail || decoded.email_address || decoded.emailAddress || '';
+      }
+
+      async function loadUserProfileFromApi() {
+        if (!token || !userId) {
+          console.warn('Profile fetch skipped: missing token or userId', { token: !!token, userId });
+          return;
+        }
+
+        const url = `${API_BASE}/api/getEmailAndUsernameFromId/${encodeURIComponent(userId)}`;
+        console.log('Fetching profile from:', url);
+        console.log('Using token present:', !!token);
+
+        try {
+          const response = await fetch(url, {
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          });
+
+          console.log('Profile response status:', response.status);
+
+          const rawText = await response.text();
+          console.log('Profile raw response body:', rawText);
+
+          if (!response.ok) {
+            console.warn('Profile fetch failed:', response.status, response.statusText);
+            return;
+          }
+
+          let payload = null;
+          try {
+            payload = rawText ? JSON.parse(rawText) : null;
+          } catch (e) {
+            console.warn('Profile response is not valid JSON:', e);
+            return;
+          }
+
+          console.log('Profile parsed payload:', payload);
+
+          const usernameFromApi =
+            payload?.username ||
+            payload?.userName ||
+            payload?.name ||
+            payload?.user?.username ||
+            payload?.user?.userName;
+
+          const emailFromApi =
+            payload?.email ||
+            payload?.mail ||
+            payload?.userEmail ||
+            payload?.emailAddress ||
+            payload?.user?.email ||
+            payload?.profile?.email;
+
+          if (!emailFromApi && payload && typeof payload === 'object') {
+            const entries = Object.entries(payload);
+            for (const [key, value] of entries) {
+              if (typeof value === 'string' && value.includes('@') && !key.includes('@')) {
+                emailFromApi = value;
+                break;
+              }
+            }
+          }
+
+          if (usernameFromApi) {
+            currentUsername = usernameFromApi;
+            setStoredValue('loggedUsername', currentUsername);
+            updateProfileUI();
+          }
+          if (emailFromApi) {
+            currentEmail = emailFromApi;
+            setStoredValue('loggedEmail', currentEmail);
+            updateProfileUI();
+          }
+        } catch (e) {
+          console.warn('Profile fetch error:', e);
+        }
+      }
 
       function showUsernameMessage(text, type) {
         if (!usernameMessage) return;
@@ -355,14 +436,23 @@
         sessionStorage.removeItem('loggedUsername');
       }
 
-      if (displayUsernameEl) displayUsernameEl.textContent = currentUsername;
-      if (displayEmailEl) {
-        if (decoded && decoded.email) {
-          displayEmailEl.textContent = decoded.email;
-        } else {
-          displayEmailEl.textContent = 'Не е указан';
+      function updateProfileUI() {
+        if (displayUsernameEl) {
+          displayUsernameEl.textContent = currentUsername || 'Потребител';
+        }
+        if (displayEmailEl) {
+          displayEmailEl.textContent = currentEmail || 'Не е указан';
         }
       }
+
+      if (displayUsernameEl) displayUsernameEl.textContent = currentUsername;
+      if (displayEmailEl) {
+        displayEmailEl.textContent = currentEmail || 'Зареждане...';
+      }
+
+      loadUserProfileFromApi().finally(() => {
+        updateProfileUI();
+      });
 
       if (currentUsername !== 'Потребител' && !getStoredValue('loggedUsername')) {
         setStoredValue('loggedUsername', currentUsername);

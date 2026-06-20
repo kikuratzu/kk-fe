@@ -303,12 +303,12 @@
             }
           }
 
-          if (!userId) {
-            const decoded = parseJwtPayload(token);
-            if (decoded) {
-              userId = decoded.sub || decoded.id || decoded.userId || decoded.uid || null;
-            }
+          const decodedToken = parseJwtPayload(token);
+          if (!userId && decodedToken) {
+            userId = decodedToken.sub || decodedToken.id || decodedToken.userId || decodedToken.uid || null;
           }
+
+          const emailFromToken = decodedToken && (decodedToken.email || decodedToken.mail || decodedToken.userEmail || decodedToken.email_address || decodedToken.emailAddress);
 
           // store token, user id and username locally. Use localStorage if 'remember' checked, otherwise sessionStorage
           const storage = remember ? localStorage : sessionStorage;
@@ -317,9 +317,17 @@
           sessionStorage.setItem('bearerToken', token);
           localStorage.setItem('loggedUsername', username);
           sessionStorage.setItem('loggedUsername', username);
+          if (emailFromToken) {
+            localStorage.setItem('loggedEmail', emailFromToken);
+            sessionStorage.setItem('loggedEmail', emailFromToken);
+            storage.setItem('loggedEmail', emailFromToken);
+          }
           const uuidRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
           if (userId && uuidRegex.test(String(userId))) {
-            storage.setItem('userId', String(userId));
+            const userIdString = String(userId);
+            storage.setItem('userId', userIdString);
+            localStorage.setItem('userId', userIdString);
+            sessionStorage.setItem('userId', userIdString);
           } else if (userId) {
             console.warn('received non-UUID userId from login response:', userId);
           }
