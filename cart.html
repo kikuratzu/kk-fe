@@ -18,6 +18,17 @@
     nav a,.dropdown-toggle{padding:6px 8px;border-radius:8px;font-weight:600;color:rgba(255,255,255,0.92)}
     nav a:hover,.dropdown-toggle:hover{background:rgba(255,255,255,0.02);color:#fff}
 
+    .quantity-control input[type=number]::-webkit-inner-spin-button,
+.quantity-control input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Hide arrows in number input fields for Firefox */
+.quantity-control input[type=number] {
+  -moz-appearance: textfield;
+}
+
     /* Cart & profile actions in nav */
     .nav-actions{display:flex;align-items:center;gap:10px;margin-left:6px}
     .nav-actions a{display:inline-flex;align-items:center;justify-content:center;padding:8px;border-radius:8px;color:rgba(255,255,255,0.92);font-weight:700}
@@ -321,7 +332,7 @@
       items.forEach((p) => {
         const itemEl = document.createElement('div');
         itemEl.className = 'cart-item';
-        const prodId = p.id || p.productId || p.productID || p.uuid || '';
+        const prodId = p.productId || p.id || p.productID || p.uuid || '';
         const price = Number(p.price || 0);
         const quantity = Number(p.quantity || 1);
 

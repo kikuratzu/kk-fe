@@ -199,18 +199,18 @@
   <section class="product-page">
     <div class="container product-layout">
       <div class="product-gallery">
-        <img src="https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=900&q=80" alt="Product image">
+        <img id="productImage" src="https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=900&q=80" alt="Product image">
       </div>
 
       <div class="product-info">
-        <span class="product-badge">Нов продукт</span>
-        <h1 class="product-title">Черна пролетна блуза</h1>
-        <p class="product-desc">Мека, стилна и удобна блуза с минималистичен дизайн за всеки ден.</p>
-        <div class="product-price">79.99 лв.</div>
+        <span class="product-badge" id="productBadge">Нов продукт</span>
+        <h1 class="product-title" id="productTitle">Черна пролетна блуза</h1>
+        <p class="product-desc" id="productDesc">Мека, стилна и удобна блуза с минималистичен дизайн за всеки ден.</p>
+        <div class="product-price" id="productPrice">79.99 лв.</div>
 
         <div>
           <strong>Размер:</strong>
-          <div class="size-row">
+          <div class="size-row" id="sizeRow">
             <button class="size-btn">S</button>
             <button class="size-btn active">M</button>
             <button class="size-btn">L</button>
@@ -227,11 +227,11 @@
           </div>
         </div>
 
-        <button class="add-btn">Добави в количката</button>
+        <button class="add-btn" id="addToCartBtn">Добави в количката</button>
 
         <div class="details-card">
           <h3>Информация за продукта</h3>
-          <ul>
+          <ul id="productDetailsList">
             <li>100% памук</li>
             <li>Удобно за ежедневно носене</li>
             <li>Подходящ за всички сезони</li>
@@ -245,12 +245,178 @@
     <div class="footer-bottom">&copy; 2024 K&K Clothing. Всички права запазени.</div>
   </footer>
 
+  <script src="cartApi.js"></script>
   <script>
     let qty = 1;
+    const defaultImage = 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=900&q=80';
+
+    const productImage = document.getElementById('productImage');
+    const productBadge = document.getElementById('productBadge');
+    const productTitle = document.getElementById('productTitle');
+    const productDesc = document.getElementById('productDesc');
+    const productPrice = document.getElementById('productPrice');
+    const productDetailsList = document.getElementById('productDetailsList');
+    const addToCartBtn = document.getElementById('addToCartBtn');
+    const sizeRow = document.getElementById('sizeRow');
+    const qtyValue = document.getElementById('qtyValue');
+
     function changeQty(delta) {
       qty = Math.max(1, qty + delta);
-      document.getElementById('qtyValue').textContent = qty;
+      qtyValue.textContent = qty;
     }
+
+    function getQueryParam(name) {
+      const params = new URLSearchParams(window.location.search);
+      return params.get(name);
+    }
+
+    function formatPrice(value) {
+      const num = Number(value || 0);
+      return num.toFixed(2);
+    }
+
+    function getProductValue(product, aliases) {
+      for (const key of aliases) {
+        if (product?.[key] !== undefined && product?.[key] !== null && product?.[key] !== '') {
+          return product[key];
+        }
+      }
+      return null;
+    }
+
+    function renderSizeButtons(sizes) {
+      const availableSizes = Array.isArray(sizes) && sizes.length
+        ? sizes
+        : ['S', 'M', 'L', 'XL'];
+
+      sizeRow.innerHTML = '';
+      availableSizes.forEach((size, index) => {
+        const btn = document.createElement('button');
+        btn.className = 'size-btn';
+        if (index === 1) btn.classList.add('active');
+        btn.textContent = size;
+        btn.addEventListener('click', () => {
+          sizeRow.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+        });
+        sizeRow.appendChild(btn);
+      });
+    }
+
+    function renderDetails(details) {
+      if (Array.isArray(details) && details.length) {
+        productDetailsList.innerHTML = '';
+        details.forEach((item) => {
+          const li = document.createElement('li');
+          li.textContent = item;
+          productDetailsList.appendChild(li);
+        });
+        return;
+      }
+
+      productDetailsList.innerHTML = `
+        <li>100% памук</li>
+        <li>Удобно за ежедневно носене</li>
+        <li>Подходящ за всички сезони</li>
+      `;
+    }
+
+    function populateProduct(product) {
+      const image = getProductValue(product, ['imageUrl', 'image', 'img', 'photo', 'picture']) || defaultImage;
+      const name = getProductValue(product, ['name', 'title', 'productName']) || 'Продукт';
+      const description = getProductValue(product, ['description', 'shortDescription', 'details']) || 'Няма описание.';
+      const price = getProductValue(product, ['price', 'priceBgn']) || 0;
+      const category = getProductValue(product, ['category', 'type', 'collection']) || 'Нов продукт';
+      const sizes = getProductValue(product, ['sizes', 'availableSizes']) || null;
+      const details = getProductValue(product, ['specifications', 'detailsList', 'features']) || null;
+
+      productImage.src = image;
+      productImage.alt = name;
+      productBadge.textContent = category;
+      productTitle.textContent = name;
+      productDesc.textContent = description;
+      productPrice.textContent = `${formatPrice(price)} лв.`;
+      renderSizeButtons(sizes);
+      renderDetails(details);
+    }
+
+    async function loadProduct() {
+      const id = getQueryParam('id');
+
+      if (!id) {
+        productTitle.textContent = 'Няма избран продукт';
+        productDesc.textContent = 'Моля, върнете се към каталога и изберете продукт.';
+        productPrice.textContent = '';
+        return;
+      }
+
+      try {
+        const response = await fetch('http://localhost:8080/api/getAllProductData', {
+          method: 'GET'
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}`);
+        }
+
+        const payload = await response.json();
+        const products = Array.isArray(payload)
+          ? payload
+          : payload.products || payload.data || payload.content || payload.result || [];
+
+        if (!Array.isArray(products)) {
+          throw new Error('Unexpected products response format');
+        }
+
+        const product = products.find((item) => {
+          const itemId = String(item.id || '');
+          return itemId === String(id);
+        });
+
+        if (!product) {
+          throw new Error('Product not found in catalog');
+        }
+
+        populateProduct(product);
+      } catch (err) {
+        console.error('Failed to load product:', err);
+        productTitle.textContent = 'Продуктът не можа да бъде зареден';
+        productDesc.textContent = err.message || 'Проверете дали ID-то е правилно или опитайте отново.';
+        productPrice.textContent = '';
+      }
+    }
+
+    addToCartBtn.addEventListener('click', () => {
+      if (!window.KKCart) {
+        alert('Кошницата не е достъпна в този момент.');
+        return;
+      }
+
+      const selectedSize = sizeRow.querySelector('.size-btn.active')?.textContent || 'M';
+      const productId = getQueryParam('id');
+      const productName = productTitle.textContent;
+      const productPriceValue = Number(productPrice.textContent.replace(/[^0-9.]/g, '')) || 0;
+
+      window.KKCart.addCartItem({
+        productId,
+        name: productName,
+        price: productPriceValue,
+        quantity: qty,
+        size: selectedSize
+      })
+        .then(() => {
+          addToCartBtn.textContent = 'Добавено';
+          setTimeout(() => {
+            addToCartBtn.textContent = 'Добави в количката';
+          }, 1200);
+        })
+        .catch((err) => {
+          console.error(err);
+          alert('Неуспешно добавяне в количката.');
+        });
+    });
+
+    loadProduct();
   </script>
 </body>
 </html>
